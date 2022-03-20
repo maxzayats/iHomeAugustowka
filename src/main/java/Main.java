@@ -1,27 +1,29 @@
-package com.maks;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
-    private static HttpURLConnection connection;
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         BufferedReader reader;
         String line;
-        StringBuffer responseContent = new StringBuffer();
+        StringBuilder responseContent = new StringBuilder();
         ArrayList<String> PMs = new ArrayList<>();
         String color = null;
 
 
         try {
-            URL url = new URL("https://looko2.com/tracker.php?lan=&search=a020a614093a");
-            connection = (HttpURLConnection) url.openConnection();
+            Scanner input = new Scanner(System.in);
+            System.out.println("Enter device code: ");
+            String deviceCode = input.nextLine();
+
+            URL url = new URL("https://looko2.com/tracker.php?lan=&search=" + deviceCode);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
@@ -31,17 +33,13 @@ public class Main {
 
             if (responseCode > 299){
                 reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                while((line = reader.readLine()) != null ){
-                    responseContent.append(line);
-                }
-                reader.close();
             } else {
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while((line = reader.readLine()) != null ){
-                    responseContent.append(line);
-                }
-                reader.close();
             }
+            while((line = reader.readLine()) != null ){
+                responseContent.append(line);
+            }
+            reader.close();
             String content = responseContent.toString();
             String[] array = content.split("[><]");
             for (String temp : array) {
@@ -49,7 +47,6 @@ public class Main {
                     PMs.add(temp);
                 }
             }
-            String[] array1 = content.split("td");
             for (String temp : array) {
                 if (temp.contains("width=20%")) {
                     String[] colorLine = temp.split("[:;]");

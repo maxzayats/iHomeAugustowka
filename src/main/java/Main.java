@@ -4,10 +4,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-
 
     public static void main(String[] args) {
         BufferedReader reader;
@@ -15,6 +15,9 @@ public class Main {
         StringBuilder responseContent = new StringBuilder();
         ArrayList<String> PMs = new ArrayList<>();
         String color = null;
+
+        String modbusIp = "192.168.0.60";
+        int modbusPort = 502;
 
 
         try {
@@ -64,5 +67,14 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ModbusServiceImpl modbus = new ModbusServiceImpl();
+        System.out.println(Arrays.toString(modbus.readRegister(5, modbusIp, modbusPort)));
+        modbus.writeRegister(5, modbusIp, modbusPort, 1);
+        System.out.println(Arrays.toString(modbus.readRegister(5, modbusIp, modbusPort)));
+
+
+
+
     }
 }
